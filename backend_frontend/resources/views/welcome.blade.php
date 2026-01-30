@@ -271,7 +271,7 @@
         </div>
 
         @if (Route::has('login'))
-            <div class="h-14.5 hidden lg:block"></div>
+            <div class="h-14.5 hidden lg:bg-red-500"></div>
         @endif
     </body>
 </html>
