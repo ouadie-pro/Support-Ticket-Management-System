@@ -19,6 +19,45 @@
         </div>
     </div>
 
+    <!-- Notifications -->
+    @if(auth()->user()->unreadNotifications->count() > 0)
+    <div class="bg-white rounded-xl shadow-md overflow-hidden border-l-4 border-yellow-500">
+        <div class="px-6 py-4 bg-yellow-50 border-b border-yellow-100">
+            <h3 class="text-lg font-semibold text-yellow-800">
+                <i class="fas fa-bell mr-2"></i>Notifications ({{ auth()->user()->unreadNotifications->count() }})
+            </h3>
+        </div>
+        <div class="divide-y divide-gray-200">
+            @foreach(auth()->user()->unreadNotifications->take(5) as $notification)
+            <div class="px-6 py-4 flex items-start space-x-4 hover:bg-gray-50">
+                <div class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-bell text-blue-600"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900">{{ $notification->data['title'] ?? 'Notification' }}</p>
+                    <p class="text-sm text-gray-500 mt-1">{{ $notification->data['message'] ?? $notification->data['title'] ?? '' }}</p>
+                    @if($notification->data['type'] === 'ticket')
+                    <a href="{{ route('tickets.show', $notification->data['id']) }}" class="text-sm text-blue-600 hover:text-blue-800 mt-1 inline-block">
+                        <i class="fas fa-external-link-alt mr-1"></i>Voir le ticket
+                    </a>
+                    @elseif($notification->data['type'] === 'complaint')
+                    <a href="{{ route('complaints.show', $notification->data['id']) }}" class="text-sm text-blue-600 hover:text-blue-800 mt-1 inline-block">
+                        <i class="fas fa-external-link-alt mr-1"></i>Voir la réclamation
+                    </a>
+                    @endif
+                </div>
+                <span class="text-xs text-gray-400 whitespace-nowrap">{{ $notification->created_at->diffForHumans() }}</span>
+            </div>
+            @endforeach
+        </div>
+        @if(auth()->user()->unreadNotifications->count() > 5)
+        <div class="px-6 py-3 bg-gray-50 text-center">
+            <a href="#" class="text-sm text-blue-600 hover:text-blue-800">Voir toutes les notifications</a>
+        </div>
+        @endif
+    </div>
+    @endif
+
     <!-- Quick Actions -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <a href="{{ route('tickets.create') }}" class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition border-l-4 border-blue-500 group">
@@ -151,7 +190,7 @@
             </div>
             <div class="divide-y divide-gray-200">
                 @forelse($recentTickets as $ticket)
-                <div class="px-6 py-4 flex items-center justify-between hover:bg-gray-50">
+                <a href="{{ route('tickets.show', $ticket->id) }}" class="block px-6 py-4 flex items-center justify-between hover:bg-gray-50">
                     <div class="flex items-center space-x-3">
                         <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                             <i class="fas fa-ticket-alt text-blue-600"></i>
@@ -161,10 +200,18 @@
                             <p class="text-sm text-gray-500">{{ $ticket->numero }}</p>
                         </div>
                     </div>
-                    <span class="px-2 py-1 text-xs font-medium rounded-full bg-{{ $ticket->statut === 'resolu' ? 'green' : 'yellow' }}-100 text-{{ $ticket->statut === 'resolu' ? 'green' : 'yellow' }}-800">
-                        {{ $ticket->statut }}
+                    <span class="px-2 py-1 text-xs font-medium rounded-full 
+                        @if($ticket->statut === 'ferme') bg-gray-100 text-gray-800
+                        @elseif($ticket->statut === 'resolu') bg-green-100 text-green-800
+                        @elseif($ticket->statut === 'en_cours') bg-blue-100 text-blue-800
+                        @else bg-purple-100 text-purple-800 @endif">
+                        @if($ticket->statut === 'ouvert') Ouvert
+                        @elseif($ticket->statut === 'en_cours') En cours
+                        @elseif($ticket->statut === 'resolu') Résolu
+                        @else Fermé
+                        @endif
                     </span>
-                </div>
+                </a>
                 @empty
                 <div class="px-6 py-4 text-center text-gray-500">Aucun ticket</div>
                 @endforelse
@@ -177,7 +224,7 @@
             </div>
             <div class="divide-y divide-gray-200">
                 @forelse($recentComplaints as $complaint)
-                <div class="px-6 py-4 flex items-center justify-between hover:bg-gray-50">
+                <a href="{{ route('complaints.show', $complaint->id) }}" class="block px-6 py-4 flex items-center justify-between hover:bg-gray-50">
                     <div class="flex items-center space-x-3">
                         <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
                             <i class="fas fa-exclamation-triangle text-red-600"></i>
@@ -187,10 +234,19 @@
                             <p class="text-sm text-gray-500">{{ $complaint->numero }}</p>
                         </div>
                     </div>
-                    <span class="px-2 py-1 text-xs font-medium rounded-full bg-{{ $complaint->statut === 'resolu' ? 'green' : 'yellow' }}-100 text-{{ $complaint->statut === 'resolu' ? 'green' : 'yellow' }}-800">
-                        {{ $complaint->statut }}
+                    <span class="px-2 py-1 text-xs font-medium rounded-full 
+                        @if($complaint->statut === 'resolu') bg-green-100 text-green-800
+                        @elseif($complaint->statut === 'rejete') bg-red-100 text-red-800
+                        @elseif($complaint->statut === 'en_cours') bg-blue-100 text-blue-800
+                        @else bg-yellow-100 text-yellow-800 @endif">
+                        @if($complaint->statut === 'soumis') Soumis
+                        @elseif($complaint->statut === 'en_attente') En attente
+                        @elseif($complaint->statut === 'en_cours') En cours
+                        @elseif($complaint->statut === 'resolu') Résolu
+                        @else Rejeté
+                        @endif
                     </span>
-                </div>
+                </a>
                 @empty
                 <div class="px-6 py-4 text-center text-gray-500">Aucune réclamation</div>
                 @endforelse

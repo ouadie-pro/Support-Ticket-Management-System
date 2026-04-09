@@ -155,39 +155,61 @@
                 <a href="{{ route('admin.reports') }}" class="text-sm text-blue-600 hover:text-blue-700">Voir tout</a>
             </div>
             <div class="divide-y divide-gray-200">
-                @foreach($tickets_recents->take(5) as $ticket)
+                @forelse($activites_recentes as $activite)
                 <div class="px-6 py-4 flex items-center justify-between hover:bg-gray-50">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-ticket-alt text-yellow-600"></i>
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center
+                            @if($activite->action === 'create') bg-green-100
+                            @elseif($activite->action === 'update' || $activite->action === 'comment_added') bg-blue-100
+                            @elseif($activite->action === 'delete') bg-red-100
+                            @elseif($activite->action === 'status_changed') bg-purple-100
+                            @elseif($activite->action === 'assigned') bg-yellow-100
+                            @else bg-gray-100 @endif">
+                            @if($activite->action === 'create')
+                                <i class="fas fa-plus text-green-600"></i>
+                            @elseif($activite->action === 'update')
+                                <i class="fas fa-edit text-blue-600"></i>
+                            @elseif($activite->action === 'comment_added')
+                                <i class="fas fa-comment text-blue-600"></i>
+                            @elseif($activite->action === 'delete')
+                                <i class="fas fa-trash text-red-600"></i>
+                            @elseif($activite->action === 'status_changed')
+                                <i class="fas fa-exchange-alt text-purple-600"></i>
+                            @elseif($activite->action === 'assigned')
+                                <i class="fas fa-user-plus text-yellow-600"></i>
+                            @else
+                                <i class="fas fa-history text-gray-600"></i>
+                            @endif
                         </div>
                         <div>
-                            <p class="font-medium text-gray-900">{{ $ticket->sujet }}</p>
-                            <p class="text-sm text-gray-500">{{ $ticket->numero }}</p>
+                            <p class="font-medium text-gray-900">
+                                @if($activite->action === 'create') Création
+                                @elseif($activite->action === 'update') Modification
+                                @elseif($activite->action === 'comment_added') Nouveau commentaire
+                                @elseif($activite->action === 'delete') Suppression
+                                @elseif($activite->action === 'status_changed') Changement de statut
+                                @elseif($activite->action === 'assigned') Assignation
+                                @else {{ $activite->action }}
+                                @endif
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                @if($activite->utilisateur)
+                                    par {{ $activite->utilisateur->name }}
+                                @endif
+                                - {{ $activite->created_at->diffForHumans() }}
+                            </p>
                         </div>
                     </div>
-                    <span class="px-2 py-1 text-xs font-medium rounded-full {{ $ticket->statut === 'resolu' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                        {{ $ticket->statut }}
+                    <span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                        {{ class_basename($activite->objet_type) ?? 'N/A' }}
                     </span>
                 </div>
-                @endforeach
-                
-                @foreach($complaints_recents->take(3) as $complaint)
-                <div class="px-6 py-4 flex items-center justify-between hover:bg-gray-50">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-exclamation-triangle text-red-600"></i>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-900">{{ $complaint->sujet }}</p>
-                            <p class="text-sm text-gray-500">{{ $complaint->numero }}</p>
-                        </div>
-                    </div>
-                    <span class="px-2 py-1 text-xs font-medium rounded-full {{ $complaint->statut === 'resolu' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                        {{ $complaint->statut }}
-                    </span>
+                @empty
+                <div class="px-6 py-8 text-center text-gray-500">
+                    <i class="fas fa-history text-4xl mb-3 text-gray-300"></i>
+                    <p>Aucune activité récente</p>
                 </div>
-                @endforeach
+                @endforelse
             </div>
         </div>
     </div>

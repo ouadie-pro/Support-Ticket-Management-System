@@ -24,6 +24,59 @@
         </div>
     @endif
 
+    <!-- Search and Filter -->
+    <div class="bg-white rounded-xl shadow-md p-4">
+        <form method="GET" action="{{ route('complaints.index') }}" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Rechercher</label>
+                <div class="relative">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Numéro ou sujet..." 
+                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Statut</label>
+                <select name="statut" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">Tous</option>
+                    <option value="soumis" {{ request('statut') === 'soumis' ? 'selected' : '' }}>Soumis</option>
+                    <option value="en_attente" {{ request('statut') === 'en_attente' ? 'selected' : '' }}>En attente</option>
+                    <option value="en_cours" {{ request('statut') === 'en_cours' ? 'selected' : '' }}>En cours</option>
+                    <option value="resolu" {{ request('statut') === 'resolu' ? 'selected' : '' }}>Résolu</option>
+                    <option value="rejete" {{ request('statut') === 'rejete' ? 'selected' : '' }}>Rejeté</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Priorité</label>
+                <select name="priorite" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">Toutes</option>
+                    <option value="urgente" {{ request('priorite') === 'urgente' ? 'selected' : '' }}>Urgente</option>
+                    <option value="haute" {{ request('priorite') === 'haute' ? 'selected' : '' }}>Haute</option>
+                    <option value="moyenne" {{ request('priorite') === 'moyenne' ? 'selected' : '' }}>Moyenne</option>
+                    <option value="faible" {{ request('priorite') === 'faible' ? 'selected' : '' }}>Faible</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                <select name="type" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">Tous</option>
+                    <option value="technique" {{ request('type') === 'technique' ? 'selected' : '' }}>Technique</option>
+                    <option value="facturation" {{ request('type') === 'facturation' ? 'selected' : '' }}>Facturation</option>
+                    <option value="service" {{ request('type') === 'service' ? 'selected' : '' }}>Service</option>
+                    <option value="autre" {{ request('type') === 'autre' ? 'selected' : '' }}>Autre</option>
+                </select>
+            </div>
+            <div class="md:col-span-5 flex items-center gap-2">
+                <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition">
+                    <i class="fas fa-filter mr-2"></i>Filtrer
+                </button>
+                <a href="{{ route('complaints.index') }}" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition">
+                    <i class="fas fa-times mr-2"></i>Réinitialiser
+                </a>
+            </div>
+        </form>
+    </div>
+
     <!-- Table -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden">
         <div class="overflow-x-auto">
@@ -45,19 +98,23 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $complaint->numero }}</td>
                         <td class="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">{{ $complaint->sujet }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                            {{ ucfirst($complaint->type) }}
+                            @if($complaint->type === 'technique') Technique
+                            @elseif($complaint->type === 'facturation') Facturation
+                            @elseif($complaint->type === 'service') Service
+                            @else Autre
+                            @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @php
                                 $prioriteColors = [
                                     'urgente' => 'bg-red-100 text-red-800',
                                     'haute' => 'bg-orange-100 text-orange-800',
-                                    'moyenne' => 'bg-blue-100 text-blue-800',
-                                    'faible' => 'bg-gray-100 text-gray-800'
+                                    'moyenne' => 'bg-yellow-100 text-yellow-800',
+                                    'faible' => 'bg-green-100 text-green-800'
                                 ];
                             @endphp
                             <span class="px-2.5 py-1 text-xs font-medium rounded-full {{ $prioriteColors[$complaint->priorite] ?? 'bg-gray-100 text-gray-800' }}">
-                                {{ $complaint->priorite }}
+                                {{ ucfirst($complaint->priorite) }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
@@ -71,7 +128,13 @@
                                 ];
                             @endphp
                             <span class="px-2.5 py-1 text-xs font-medium rounded-full {{ $statutColors[$complaint->statut] ?? 'bg-gray-100 text-gray-800' }}">
-                                {{ $complaint->statut }}
+                                @if($complaint->statut === 'soumis') Soumis
+                                @elseif($complaint->statut === 'en_attente') En attente
+                                @elseif($complaint->statut === 'en_cours') En cours
+                                @elseif($complaint->statut === 'resolu') Résolu
+                                @elseif($complaint->statut === 'rejete') Rejeté
+                                @else {{ ucfirst($complaint->statut) }}
+                                @endif
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $complaint->created_at->format('d/m/Y') }}</td>

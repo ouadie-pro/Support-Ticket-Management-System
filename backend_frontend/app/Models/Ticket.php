@@ -41,7 +41,7 @@ class Ticket extends Model
 
     public function agent()
     {
-        return $this->belongsTo(Utilisateur::class, 'assigne_a');
+        return $this->belongsTo(User::class, 'assigne_a');
     }
 
     public function commentaires()

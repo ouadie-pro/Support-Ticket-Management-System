@@ -62,13 +62,19 @@ class AdminController extends Controller
                 return (object) ['code' => $role ? $role->code : 'unknown', 'total' => $item->total];
             });
 
+        $activites_recentes = \App\Models\JournalActivite::with('utilisateur')
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+
         return view('admin.dashboard', compact(
             'stats',
             'tickets_par_mois',
             'complaints_par_mois',
             'tickets_recents',
             'complaints_recents',
-            'users_par_role'
+            'users_par_role',
+            'activites_recentes'
         ));
     }
 

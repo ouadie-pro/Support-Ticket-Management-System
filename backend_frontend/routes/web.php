@@ -19,7 +19,6 @@ use App\Http\Controllers\PieceJointeController;
 use App\Http\Controllers\ParametreController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\JournalActiviteController;
-use App\Http\Controllers\HistoriqueTicketController;
 use App\Http\Controllers\EscaladeController;
 use App\Http\Controllers\CommentaireTicketController;
 use App\Http\Controllers\CategorieArticleController;
@@ -27,9 +26,10 @@ use App\Http\Controllers\CanalSupportController;
 use App\Http\Controllers\BaseConnaissanceController;
 use App\Http\Controllers\AdresseController;
 use App\Http\Controllers\UtilisateurController;
+use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
-    return view('home');
+    return redirect()->route('login');
 })->name('home');
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -40,21 +40,30 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
-
-    Route::resource('users', UserController::class);
-    Route::resource('complaints', ComplaintController::class);
+    
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
     
     Route::post('/tickets/{ticket}/comments', [CommentController::class, 'storeTicketComment'])->name('tickets.comments.store');
     Route::post('/complaints/{complaint}/comments', [CommentController::class, 'storeComplaintComment'])->name('complaints.comments.store');
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
-
-    Route::patch('/complaints/{complaint}/assign', [ComplaintController::class, 'assign'])->name('complaints.assign');
-    Route::patch('/complaints/{complaint}/resolve', [ComplaintController::class, 'resolve'])->name('complaints.resolve');
+    
+    Route::post('/tickets/{ticket}/assign', [TicketController::class, 'assign'])->name('tickets.assign');
+    Route::post('/tickets/{ticket}/status', [TicketController::class, 'updateStatus'])->name('tickets.update-status');
+    
+    Route::post('/complaints/{complaint}/assign', [ComplaintController::class, 'assign'])->name('complaints.assign');
+    Route::post('/complaints/{complaint}/status', [ComplaintController::class, 'updateStatus'])->name('complaints.update-status');
+    Route::post('/complaints/{complaint}/priority', [ComplaintController::class, 'updatePriority'])->name('complaints.update-priority');
+    Route::post('/complaints/{complaint}/resolve', [ComplaintController::class, 'resolve'])->name('complaints.resolve');
 
     Route::post('/notifications/mark-read', function () {
         auth()->user()->unreadNotifications->markAsRead();
         return back();
     })->name('notifications.markRead');
+    
+    Route::resource('users', UserController::class);
+    Route::resource('complaints', ComplaintController::class);
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {

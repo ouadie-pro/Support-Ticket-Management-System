@@ -22,6 +22,7 @@ class JournalActivite extends Model
     protected $casts = [
         'donnees_avant' => 'array',
         'donnees_apres' => 'array',
+        'created_at' => 'datetime',
     ];
 
     public function utilisateur()
