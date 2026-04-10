@@ -7,25 +7,9 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientController;
-use App\Http\Controllers\CategorieTicketController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\SLAController;
-use App\Http\Controllers\SatisfactionController;
 use App\Http\Controllers\ReponsePredefinieController;
-use App\Http\Controllers\PieceJointeController;
-use App\Http\Controllers\ParametreController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\JournalActiviteController;
-use App\Http\Controllers\EscaladeController;
-use App\Http\Controllers\CommentaireTicketController;
-use App\Http\Controllers\CategorieArticleController;
-use App\Http\Controllers\CanalSupportController;
-use App\Http\Controllers\BaseConnaissanceController;
-use App\Http\Controllers\AdresseController;
-use App\Http\Controllers\UtilisateurController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
@@ -62,8 +46,11 @@ Route::middleware(['auth'])->group(function () {
         return back();
     })->name('notifications.markRead');
     
-    Route::resource('users', UserController::class);
+    Route::resource('tickets', TicketController::class);
     Route::resource('complaints', ComplaintController::class);
+    Route::resource('clients', ClientController::class);
+    Route::resource('roles', RoleController::class);
+    Route::resource('reponsePredefinies', ReponsePredefinieController::class);
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -83,28 +70,10 @@ Route::middleware(['auth', 'role:agent'])->prefix('agent')->name('agent.')->grou
         $user = auth()->user();
         $tickets = \App\Models\Ticket::where('assigne_a', $user->id)->paginate(15);
         $complaints = \App\Models\Complaint::where('traite_par', $user->id)->paginate(15);
-        return view('agent.dashboard', compact('tickets', 'complaints'));
+        $nouvellesComplaints = \App\Models\Complaint::whereNull('traite_par')
+            ->whereIn('statut', ['soumis', 'en_attente'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+        return view('agent.dashboard', compact('tickets', 'complaints', 'nouvellesComplaints'));
     })->name('dashboard');
 });
-
-Route::resource('utilisateurs', UtilisateurController::class);
-Route::resource('tickets', TicketController::class);
-Route::resource('clients', ClientController::class);
-Route::resource('categorieTickets', CategorieTicketController::class);
-Route::resource('roles', RoleController::class);
-Route::resource('permissions', PermissionController::class);
-Route::resource('slas', SLAController::class);
-Route::resource('satisfactions', SatisfactionController::class);
-Route::resource('reponsePredefinies', ReponsePredefinieController::class);
-Route::resource('pieceJointes', PieceJointeController::class);
-Route::resource('notifications', NotificationController::class);
-Route::resource('historiqueTickets', HistoriqueTicketController::class);
-Route::resource('escalades', EscaladeController::class);
-Route::resource('commentaireTickets', CommentaireTicketController::class);
-Route::resource('categorieArticles', CategorieArticleController::class);
-Route::resource('canalSupports', CanalSupportController::class);
-Route::resource('baseConnaissances', BaseConnaissanceController::class);
-Route::resource('adresses', AdresseController::class);
-
-Route::resource('parametres', ParametreController::class)
-    ->except(['show','create','edit','destroy']);

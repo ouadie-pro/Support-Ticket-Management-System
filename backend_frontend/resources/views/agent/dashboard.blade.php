@@ -81,7 +81,71 @@
             @endif
         </div>
 
-        <!-- Complaints Section -->
+        <!-- New Complaints Section -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-green-500 to-emerald-600">
+                <h3 class="text-lg font-semibold text-white">
+                    <i class="fas fa-inbox mr-2"></i>Nouvelles Réclamations
+                </h3>
+                <p class="text-green-100 text-sm mt-1">Réclamations non assignées</p>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">N°</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sujet</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priorité</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @forelse($nouvellesComplaints as $complaint)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">{{ $complaint->numero }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">{{ $complaint->sujet }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                @if($complaint->type === 'technique') Technique
+                                @elseif($complaint->type === 'facturation') Facturation
+                                @elseif($complaint->type === 'service') Service
+                                @else Autre
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    @if($complaint->priorite === 'urgente') bg-red-100 text-red-800
+                                    @elseif($complaint->priorite === 'haute') bg-orange-100 text-orange-800
+                                    @elseif($complaint->priorite === 'moyenne') bg-yellow-100 text-yellow-800
+                                    @else bg-green-100 text-green-800 @endif">
+                                    {{ ucfirst($complaint->priorite) }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <a href="{{ route('complaints.show', $complaint->id) }}" class="text-blue-600 hover:text-blue-900 font-medium">
+                                    <i class="fas fa-eye"></i> Voir
+                                </a>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                                <i class="fas fa-inbox text-4xl mb-3 text-gray-300"></i>
+                                <p>Aucune nouvelle réclamation</p>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            @if($nouvellesComplaints->hasPages())
+            <div class="px-6 py-4 border-t border-gray-200">
+                {{ $nouvellesComplaints->links() }}
+            </div>
+            @endif
+        </div>
+
+        <!-- My Assigned Complaints Section -->
         <div class="bg-white rounded-xl shadow-md overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-yellow-500 to-orange-500">
                 <h3 class="text-lg font-semibold text-white">

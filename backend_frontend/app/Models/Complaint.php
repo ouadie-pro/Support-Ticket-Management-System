@@ -20,6 +20,12 @@ class Complaint extends Model
         'resolution',
     ];
 
+    protected $casts = [
+        'date_resolution' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     protected static function boot()
     {
         parent::boot();
