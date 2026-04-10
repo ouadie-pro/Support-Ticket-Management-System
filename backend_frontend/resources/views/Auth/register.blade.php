@@ -5,19 +5,20 @@
 @section('content')
 <div class="min-h-screen flex">
     <!-- Left Side - Form -->
-    <div class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
+    <div class="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 md:p-8 bg-gray-50">
         <div class="w-full max-w-md">
-            <div class="lg:hidden text-center mb-8">
-                <div class="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-headset text-white text-2xl"></i>
+            <!-- Mobile Logo -->
+            <div class="lg:hidden text-center mb-6 sm:mb-8">
+                <div class="w-14 h-14 sm:w-16 sm:h-16 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <i class="fas fa-headset text-white text-2xl sm:text-3xl"></i>
                 </div>
-                <h1 class="text-2xl font-bold text-gray-900">SupportPro</h1>
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-900">SupportPro</h1>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-xl p-8">
-                <div class="text-center mb-8">
-                    <h2 class="text-2xl font-bold text-gray-900">Créer un compte</h2>
-                    <p class="text-gray-500 mt-2">Rejoignez notre plateforme de support</p>
+            <div class="bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl p-6 sm:p-8">
+                <div class="text-center mb-6 sm:mb-8">
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Créer un compte</h2>
+                    <p class="text-gray-500 mt-2 text-sm sm:text-base">Rejoignez notre plateforme de support</p>
                 </div>
 
                 <form method="POST" action="{{ route('register') }}" class="space-y-5">
@@ -30,7 +31,7 @@
                                 <i class="fas fa-user text-gray-400"></i>
                             </div>
                             <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus
-                                class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-gray-50"
+                                class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-gray-50 text-sm sm:text-base"
                                 placeholder="Jean Dupont">
                         </div>
                         @error('name')
@@ -45,7 +46,7 @@
                                 <i class="fas fa-envelope text-gray-400"></i>
                             </div>
                             <input id="email" type="email" name="email" value="{{ old('email') }}" required
-                                class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-gray-50"
+                                class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-gray-50 text-sm sm:text-base"
                                 placeholder="vous@exemple.com">
                         </div>
                         @error('email')
@@ -60,7 +61,7 @@
                                 <i class="fas fa-lock text-gray-400"></i>
                             </div>
                             <input id="password" type="password" name="password" required
-                                class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-gray-50"
+                                class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-gray-50 text-sm sm:text-base"
                                 placeholder="••••••••">
                         </div>
                         @error('password')
@@ -75,19 +76,19 @@
                                 <i class="fas fa-lock text-gray-400"></i>
                             </div>
                             <input id="password_confirmation" type="password" name="password_confirmation" required
-                                class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-gray-50"
+                                class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition bg-gray-50 text-sm sm:text-base"
                                 placeholder="••••••••">
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2">
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2 text-sm sm:text-base">
                         <span>Créer mon compte</span>
                         <i class="fas fa-user-plus"></i>
                     </button>
                 </form>
 
                 <div class="mt-6 text-center">
-                    <p class="text-gray-600">Déjà inscrit?
+                    <p class="text-gray-600 text-sm">Déjà inscrit?
                         <a href="{{ route('login') }}" class="text-blue-600 hover:text-blue-700 font-medium">Se connecter</a>
                     </p>
                 </div>
@@ -95,7 +96,7 @@
         </div>
     </div>
 
-    <!-- Right Side - Branding -->
+    <!-- Right Side - Branding (hidden on mobile) -->
     <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900 flex-col justify-center items-center p-12">
         <div class="text-center">
             <div class="w-20 h-20 bg-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg">

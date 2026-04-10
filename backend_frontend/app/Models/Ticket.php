@@ -9,7 +9,7 @@ class Ticket extends Model
 {
     protected $fillable = [
         'numero',
-        'client_id',
+        'user_id',
         'sujet',
         'description',
         'priorite',
@@ -31,7 +31,7 @@ class Ticket extends Model
 
     public function client()
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function categorie()

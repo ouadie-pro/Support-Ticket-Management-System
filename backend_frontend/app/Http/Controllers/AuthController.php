@@ -93,9 +93,9 @@ class AuthController extends Controller
             return redirect()->route('agent.dashboard');
         }
 
-        $ticketsCount = \App\Models\Ticket::where('client_id', $user->id)->count();
+        $ticketsCount = \App\Models\Ticket::where('user_id', $user->id)->count();
         $complaintsCount = \App\Models\Complaint::where('user_id', $user->id)->count();
-        $recentTickets = \App\Models\Ticket::where('client_id', $user->id)->latest()->take(5)->get();
+        $recentTickets = \App\Models\Ticket::where('user_id', $user->id)->latest()->take(5)->get();
         $recentComplaints = \App\Models\Complaint::where('user_id', $user->id)->latest()->take(5)->get();
 
         return view('dashboard', compact('user', 'ticketsCount', 'complaintsCount', 'recentTickets', 'recentComplaints'));

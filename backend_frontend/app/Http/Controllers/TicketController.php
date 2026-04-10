@@ -40,7 +40,7 @@ class TicketController extends Controller
 
         $user = Auth::user();
         if ($user->isClient()) {
-            $query->where('client_id', $user->id);
+            $query->where('user_id', $user->id);
         }
 
         $tickets = $query->orderBy('created_at', 'desc')->paginate(15);
@@ -79,7 +79,7 @@ class TicketController extends Controller
         $ticket = Ticket::create([
             'sujet' => $validated['sujet'],
             'description' => $validated['description'],
-            'client_id' => Auth::id(),
+            'user_id' => Auth::id(),
             'categorie_id' => $validated['categorie_id'] ?? null,
             'priorite' => $validated['priorite'] ?? 'moyenne',
             'statut' => 'ouvert',
@@ -113,7 +113,7 @@ class TicketController extends Controller
     {
         $user = Auth::user();
         
-        if ($user->isClient() && $ticket->client_id !== $user->id) {
+        if ($user->isClient() && $ticket->user_id !== $user->id) {
             abort(403, 'Accès non autorisé à ce ticket.');
         }
         
@@ -262,7 +262,7 @@ class TicketController extends Controller
             return true;
         }
         
-        if ($ticket->client_id && $user->client && $ticket->client_id === $user->client->id) {
+        if ($ticket->user_id && $ticket->user_id === $user->id) {
             return true;
         }
         
